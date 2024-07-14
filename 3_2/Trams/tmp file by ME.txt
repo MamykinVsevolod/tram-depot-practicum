@@ -1,0 +1,110 @@
+мой код
+файл ui_addformwidget.h
+lineEdit -> setFixedSize(180, 20);
+        lineEdit_2 -> setFixedSize(180, 20);
+        lineEdit_3 -> setFixedSize(180, 20);
+        lineEdit_4 -> setFixedSize(180, 20);
+        lineEdit->setValidator(new QIntValidator(0, 10000, lineEdit));
+        lineEdit_3->setValidator(new QIntValidator(0, 1000, lineEdit_3));
+        lineEdit_4->setValidator(new QIntValidator(0, 10, lineEdit_4));
+файл ui_printformwidget.h
+ tableWidget = new QTableWidget(10, 4, printFormWidget);
+        tableWidget->setObjectName(QString::fromUtf8("tableWidget"));
+        QStringList strlist; // объект Список строк
+        strlist << "Номер" << "Модель" << "Год пр-ва" << "Срок службы";
+        tableWidget->setHorizontalHeaderLabels(strlist);// включаем заголовок
+        tableWidget->setColumnWidth(0, 80);
+        tableWidget->setColumnWidth(1, 80);
+        tableWidget->setColumnWidth(2, 80);
+        tableWidget->setColumnWidth(3, 80);
+		
+		
+QLineSeries *series = new QLineSeries();
+    bookFile book;
+    QDataStream in(book.f);
+    QVector <int> vec_years(2024, 0);
+    recType rec;
+    while (!in.atEnd()){
+        in >> rec.number >> rec.model >> rec.year >> rec.period;
+        int tmp = rec.year.toDouble();
+        vec_years[tmp] += 1;
+    }
+    int j = 0;
+    for (int i = 0; i < vec_years.size(); ++i){
+        if (vec_years[i] != 0) {
+            series->append(j, vec_years[i]);
+            j += 1;
+            qDebug() <<vec_years[i];
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*series->append(0, 16);
+    series->append(1, 25);
+    series->append(2, 24);
+    series->append(3, 19);
+    series->append(4, 33);
+    series->append(5, 25);
+    series->append(6, 34);*/
+    // Create chart, add data, hide legend, and add axis
+    QChart *chart = new QChart();
+    chart->legend()->hide();
+    chart->addSeries(series);
+    chart->createDefaultAxes();
+    // Customize the title font
+    QFont font;
+    font.setPixelSize(18);
+    chart->setTitleFont(font);
+    chart->setTitleBrush(QBrush(Qt::black));
+    chart->setTitle("Количество произведенных трамваев по годам");
+    // Change the line color and weight
+    QPen pen(QRgb(0x000000));
+    pen.setWidth(5);
+    series->setPen(pen);
+    chart->setAnimationOptions(QChart::AllAnimations);
+    // Change the x axis categories
+    QCategoryAxis *axisX = new QCategoryAxis();
+    j = 0;
+    for (int i = 0; i < vec_years.size(); ++i){
+        if (vec_years[i] != 0) {
+            QString s; s.setNum(i);
+            axisX->append(s, j);
+            j += 1;
+        }
+    }
+
+    /*axisX->append("1986",0);
+    axisX->append("1987",1);
+    axisX->append("1988",2);
+    axisX->append("1989",3);
+    axisX->append("1990",4);
+    axisX->append("1991",5);
+    axisX->append("1992",6);*/
+    chart->setAxisX(axisX, series);
+
+    // Used to display the chart
+    QChartView *chartView = new QChartView(chart, this);
+    chartView->setRenderHint(QPainter::Antialiasing);
+    chartView -> setFixedSize(500, 400); 
